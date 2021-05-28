@@ -23,10 +23,6 @@ class NewVisitorTest(LiveServerTestCase):
         if time.time()-start_time>MAX_WAIT:
           raise e
         time.sleep(0.5)
-  def test_redirects_after_POST(self):
-    response=self.client.post('/',data={'item_text':'A new list item'})
-    self.assertEqual(response.status_code,302)
-    self.assertEqual(response['location'],'/lists/the-only-list-in-the-world/')
   def test_can_start_a_list_for_one_user(self):
     self.browser.get(self.live_server_url)
     self.assertIn('To-Do',self.browser.title)
@@ -67,7 +63,7 @@ class NewVisitorTest(LiveServerTestCase):
     inputbox=self.browser.find_element_by_id('id_new_item')
     inputbox.send_keys('Buy milk')
     inputbox.send_keys(Keys.ENTER)
-    self.wait_for_row_in_list_table('1:Buy milk')
+    self.wait_for_row_in_list_table('1: Buy milk')
 
     francis_list_url=self.browser.current_url
     self.assertRegex(francis_list_url,'/lists/.+')
@@ -75,4 +71,4 @@ class NewVisitorTest(LiveServerTestCase):
 
     page_text=self.browser.find_element_by_tag_name('body').text
     self.assertNotIn('Buy peacock feathers',page_text)
-    self.assertIn('Buy milk')
+    self.assertIn('Buy milk',page_text)
